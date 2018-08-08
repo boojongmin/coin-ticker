@@ -32,8 +32,8 @@ class TickerService(val bitzApi: BitzApi,
             val ethKrw = (it.value.ply_eth?.last ?: 0.0) * amount * eth_krw.last
 
             """--------------[${it.key}]----------------
-                |> ply_btc: ${it.value.ply_btc?.lastStr ?: "X"} 비트코인
-                |> ply_eth: ${it.value.ply_eth?.lastStr ?: "X"} 이더
+                |> ply->btc: ${it.value.ply_btc?.lastStr ?: "X"} 비트코인
+                |> ply->eth: ${it.value.ply_eth?.lastStr ?: "X"} 이더
                 |
                 """.trimMargin() +
 //"""
@@ -43,8 +43,8 @@ class TickerService(val bitzApi: BitzApi,
 //               |>> calc ply_usdt: ${ if(ethUsdt == 0.0) "X" else "%.0f 달러".format(ethUsdt)}
 //""" +
                 """
-                |> calc ply_krw: ${ if(btcKrw == 0.0) "X" else "%,.0f 원".format(btcKrw)}
-                |> calc ply_krw: ${ if(ethKrw == 0.0) "X" else "%,.0f 원".format(ethKrw)}
+                |> ply->btc->krw: ${ if(btcKrw == 0.0) "X" else "%,.0f 원".format(btcKrw)}
+                |> ply->eth->krw: ${ if(ethKrw == 0.0) "X" else "%,.0f 원".format(ethKrw)}
                 |
             """.trimMargin()
         }.reduce({ a, b -> a + b })
