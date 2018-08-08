@@ -7,6 +7,9 @@ import boojongmin.crtyptocurrency.tradeinfo.gateio.GateIoApi
 import boojongmin.crtyptocurrency.tradeinfo.lbank.LbankApi
 import boojongmin.crtyptocurrency.tradeinfo.model.USDTTickerModel
 import org.springframework.stereotype.Service
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
+import java.util.*
 
 @Service
 class TickerService(val bitzApi: BitzApi,
@@ -17,9 +20,10 @@ class TickerService(val bitzApi: BitzApi,
     fun facade(): Map<String, USDTTickerModel> {
         val bitz = bitzApi.tickerModel()
         val cobinhood = cobinhoodApi.tickerModel()
-        val gateIo = gateIoApi.tickerModel()
+//        val gateIo = gateIoApi.tickerModel()
         val lbank = lbankApi.tickerModel()
-        return mapOf(bitz, cobinhood, gateIo, lbank)
+        return mapOf(bitz, cobinhood, lbank)
+//        return mapOf(bitz, cobinhood, gateIo, lbank)
     }
 
     fun facadePretty(amount: Double): String {
@@ -32,8 +36,8 @@ class TickerService(val bitzApi: BitzApi,
             val ethKrw = (it.value.ply_eth?.last ?: 0.0) * amount * eth_krw.last
 
             """--------------[${it.key}]----------------
-                |> ply->btc: ${it.value.ply_btc?.lastStr ?: "X"} 비트코인
-                |> ply->eth: ${it.value.ply_eth?.lastStr ?: "X"} 이더
+                |ply->btc: ${if(it.value.ply_btc?.lastStr == null) "X" else  it.value.ply_btc!!.lastStr + "비트코인"}
+                |ply->eth: ${if(it.value.ply_eth?.lastStr == null) "X" else  it.value.ply_eth!!.lastStr + "이더"}
                 |
                 """.trimMargin() +
 //"""
@@ -43,13 +47,13 @@ class TickerService(val bitzApi: BitzApi,
 //               |>> calc ply_usdt: ${ if(ethUsdt == 0.0) "X" else "%.0f 달러".format(ethUsdt)}
 //""" +
                 """
-                |> ply->btc->krw: ${ if(btcKrw == 0.0) "X" else "%,.0f 원".format(btcKrw)}
-                |> ply->eth->krw: ${ if(ethKrw == 0.0) "X" else "%,.0f 원".format(ethKrw)}
+                |ply->btc->krw: ${ if(btcKrw == 0.0) "X" else "%,.0f 원".format(btcKrw)}
+                |ply->eth->krw: ${ if(ethKrw == 0.0) "X" else "%,.0f 원".format(ethKrw)}
                 |
             """.trimMargin()
         }.reduce({ a, b -> a + b })
 
-        return ">>>>> 오늘의 10000PLY 시세 정보(KRW by 코인원)<<<<<\n" +result
+        return "${LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))} 10000PLY 시세 정보(KRW by 코인원)\n" +result
     }
 
 }
